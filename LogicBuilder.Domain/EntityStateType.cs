@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace LogicBuilder.Domain
+﻿namespace LogicBuilder.Domain
 {
     public enum EntityStateType
     {

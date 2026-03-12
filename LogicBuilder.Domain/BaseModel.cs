@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace LogicBuilder.Domain
+﻿namespace LogicBuilder.Domain
 {
     abstract public class BaseModel
     {
