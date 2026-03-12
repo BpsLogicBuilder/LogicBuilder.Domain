@@ -11,7 +11,7 @@
 		<IncludeSymbols>true</IncludeSymbols>
 		<SymbolPackageFormat>snupkg</SymbolPackageFormat>
 		<EmbedUntrackedSources>true</EmbedUntrackedSources>
-    <Description>LogicBuilder.Domain includes the base class for all DTOs in the data stack;</Description>
+    <Description>LogicBuilder.Domain includes the interface all model classes must implement to participate in the framework's change tracking and object mapping.</Description>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
     <PackageReleaseNotes>Refactoring to optimize DevOps.</PackageReleaseNotes>
     <PackageTags>crud operations logic-builder</PackageTags>

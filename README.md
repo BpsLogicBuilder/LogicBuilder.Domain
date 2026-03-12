@@ -1,5 +1,9 @@
 # LogicBuilder.Domain
 
+[![CI](https://github.com/BpsLogicBuilder/LogicBuilder.Domain/actions/workflows/ci.yml/badge.svg)](https://github.com/BpsLogicBuilder/LogicBuilder.Domain/actions/workflows/ci.yml)
+[![CodeQL](https://github.com/BpsLogicBuilder/LogicBuilder.Domain/actions/workflows/github-code-scanning/codeql/badge.svg)](https://github.com/BpsLogicBuilder/LogicBuilder.Domain/actions/workflows/github-code-scanning/codeql)
+[![NuGet](https://img.shields.io/nuget/v/LogicBuilder.Domain.svg)](https://www.nuget.org/packages/LogicBuilder.Domain)
+
 The **LogicBuilder.Domain** project provides foundational classes for building domain models in a layered architecture pattern.
 
 ## Overview
