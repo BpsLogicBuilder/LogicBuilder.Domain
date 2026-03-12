@@ -80,7 +80,7 @@ jobs:
         run: |
           dotnet pack ${{ env.PROJECT_PATH }} --configuration Release -o ./nupkg --no-build
           dotnet nuget push ${{ env.NUGET_PACKAGE_PATH }} --skip-duplicate --api-key ${{ env.GITHUB_TOKEN }}
-          dotnet nuget push ${{ env.NUGET_PACKAGE_PATH }}--skip-duplicate --source ${{ env.NUGET_URL }} --api-key ${{ env.NUGET_API_KEY }}
+          dotnet nuget push ${{ env.NUGET_PACKAGE_PATH }} --skip-duplicate --source ${{ env.NUGET_URL }} --api-key ${{ env.NUGET_API_KEY }}
         env:
           NUGET_URL: 'https://api.nuget.org/v3/index.json'
           NUGET_API_KEY: ${{ steps.nuget_login.outputs.NUGET_API_KEY }}
