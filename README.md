@@ -2,6 +2,8 @@
 
 [![CI](https://github.com/BpsLogicBuilder/LogicBuilder.Domain/actions/workflows/ci.yml/badge.svg)](https://github.com/BpsLogicBuilder/LogicBuilder.Domain/actions/workflows/ci.yml)
 [![CodeQL](https://github.com/BpsLogicBuilder/LogicBuilder.Domain/actions/workflows/github-code-scanning/codeql/badge.svg)](https://github.com/BpsLogicBuilder/LogicBuilder.Domain/actions/workflows/github-code-scanning/codeql)
+[![codecov](https://codecov.io/gh/BpsLogicBuilder/LogicBuilder.Domain/graph/badge.svg?token=AFP42UUF34)](https://codecov.io/gh/BpsLogicBuilder/LogicBuilder.Domain)
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=BpsLogicBuilder_LogicBuilder.Domain&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=BpsLogicBuilder_LogicBuilder.Domain)
 [![NuGet](https://img.shields.io/nuget/v/LogicBuilder.Domain.svg)](https://www.nuget.org/packages/LogicBuilder.Domain)
 
 The **LogicBuilder.Domain** project provides foundational classes for building domain models in a layered architecture pattern.
