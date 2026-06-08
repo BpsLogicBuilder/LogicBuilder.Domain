@@ -6,6 +6,7 @@
     <PackageId>LogicBuilder.Domain</PackageId>
 		<Authors>BlaiseD</Authors>
 		<LangVersion>latest</LangVersion>
+		<Nullable>enable</Nullable>
 		<WarningsAsErrors>true</WarningsAsErrors>
 		<PublishRepositoryUrl>true</PublishRepositoryUrl>
 		<IncludeSymbols>true</IncludeSymbols>
@@ -38,7 +39,8 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="10.0.201" PrivateAssets="All" />
+    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="10.0.300" PrivateAssets="All" />
+    <PackageReference Include="System.Text.Json" Version="10.0.8" />
   </ItemGroup>
 
 </Project>
