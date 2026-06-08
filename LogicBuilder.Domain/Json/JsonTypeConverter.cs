@@ -32,16 +32,23 @@ namespace LogicBuilder.Domain.Json
             JsonProperty GetJsonProperty()
                 => jsonDocument.RootElement.EnumerateObject().FirstOrDefault(e => e.Name.ToLowerInvariant() == TypePropertyName.ToLowerInvariant());
 
+            string? objectType = jsonProperty.Value.GetString();
+
             return (T)JsonSerializer.Deserialize
             (
                 jsonDocument.RootElement.GetRawText(),
-                Type.GetType(jsonProperty.Value.GetString()) ?? throw new InvalidOperationException($"Type cannot be loaded for {jsonProperty.Value.GetString()}."),
+                Type.GetType(objectType) ?? throw new InvalidOperationException($"Type cannot be loaded for {objectType}."),
                 options
             )!;//never null because only valid JSON like "null" can return null.  For this method, the JsonTokenType is always JsonTokenType.StartObject.
         }
 
         public override void Write(Utf8JsonWriter writer, T value, JsonSerializerOptions options)
-            => JsonSerializer.Serialize(writer, value, value?.GetType() ?? throw new InvalidOperationException("Type cannot be null"), options);
+        {
+            if (value is null)
+                throw new ArgumentNullException(nameof(value), "Value cannot be null.");
+
+            JsonSerializer.Serialize(writer, value, value.GetType(), options);
+        }
         #endregion Methods
     }
 }

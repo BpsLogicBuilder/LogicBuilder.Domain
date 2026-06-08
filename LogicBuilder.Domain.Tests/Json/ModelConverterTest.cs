@@ -40,15 +40,15 @@ namespace LogicBuilder.Domain.Tests.Json
             TestModel nullValue = new(null);
 
             // Act & Assert
-            var exception = Assert.Throws<InvalidOperationException>(() =>
+            var exception = Assert.Throws<ArgumentNullException>(() =>
             {
                 JsonSerializer.Serialize(nullValue);
             });
-            Assert.Equal("Type cannot be null", exception.Message);
+            Assert.Equal("Value cannot be null. (Parameter 'value')", exception.Message);
         }
 
         [Fact]
-        public void DescriptorConverterThrows_WhenTypeStringIsInvalid()
+        public void ModelConverterThrows_WhenTypeStringIsInvalid()
         {
             // Arrange
             InvalidTypeModel invalidTypeModel = new(new InvalidTypeChildModel());
