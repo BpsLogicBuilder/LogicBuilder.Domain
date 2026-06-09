@@ -1,3 +1,4 @@
+* 2026-06-09 - AB#166: Updating the release notes.
 * 2026-06-08 - AB#166: Code QL fixes.
 * 2026-06-08 - AB#166: Reference test results in dotnet-sonarscanner command.
 * 2026-06-08 - AB#166: Handling base model serialization in the Domain library.
