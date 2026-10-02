@@ -1,3 +1,4 @@
+* 2026-10-02 - AB#240: Reuse serialization options in test class.
 * 2026-10-02 - AB#240: Remediate unsafe deserialization.
 * 2026-06-09 - AB#166: Updating the release notes.
 * 2026-06-08 - AB#166: Code QL fixes.

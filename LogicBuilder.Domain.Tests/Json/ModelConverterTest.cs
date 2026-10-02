@@ -91,12 +91,10 @@ namespace LogicBuilder.Domain.Tests.Json
         public void ModelConverterAccepts_DescriptorSubtypeFromRegisteredAssembly()
         {
             // Arrange
-            JsonSerializerOptions options = new();
-            options.Converters.Add(new ModelConverter(typeof(ExternalModel).Assembly));
-            string json = JsonSerializer.Serialize<BaseModel>(new ExternalModel { Name = "A" }, options);
+            string json = JsonSerializer.Serialize<BaseModel>(new ExternalModel { Name = "A" }, TestSerializationOptions.ExternalModelOptions);
 
             // Act
-            BaseModel result = JsonSerializer.Deserialize<BaseModel>(json, options)!;
+            BaseModel result = JsonSerializer.Deserialize<BaseModel>(json, TestSerializationOptions.ExternalModelOptions)!;
 
             // Assert
             Assert.Equal("A", Assert.IsType<ExternalModel>(result).Name);
@@ -133,13 +131,11 @@ namespace LogicBuilder.Domain.Tests.Json
         public void ModelConverterAccepts_TypeStringWithDifferentAssemblyVersion()
         {
             // Arrange
-            JsonSerializerOptions options = new();
-            options.Converters.Add(new ModelConverter(typeof(ExternalModel).Assembly));
             string typeString = $"{typeof(ExternalModel).FullName}, {typeof(ExternalModel).Assembly.GetName().Name}, Version=0.0.0.1, Culture=neutral, PublicKeyToken=null";
             string json = "{\"TypeString\":\"" + typeString + "\",\"Constant\":1}";
 
             // Act & Assert
-            Assert.IsType<ExternalModel>(JsonSerializer.Deserialize<BaseModel>(json, options));
+            Assert.IsType<ExternalModel>(JsonSerializer.Deserialize<BaseModel>(json, TestSerializationOptions.ExternalModelOptions));
         }
 
         [Fact]
@@ -300,6 +296,24 @@ namespace LogicBuilder.Domain.Tests.Json
                     _default = options;
 
                     return _default;
+                }
+            }
+
+            private static JsonSerializerOptions? _externalModelOptions;
+            public static JsonSerializerOptions ExternalModelOptions
+            {
+                get
+                {
+                    if (_externalModelOptions != null)
+                        return _externalModelOptions;
+
+                    var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+
+                    options.Converters.Add(new ModelConverter(typeof(ExternalModel).Assembly));
+
+                    _externalModelOptions = options;
+
+                    return _externalModelOptions;
                 }
             }
         }
