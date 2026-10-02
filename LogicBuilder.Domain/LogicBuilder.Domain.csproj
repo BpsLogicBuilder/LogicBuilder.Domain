@@ -14,7 +14,7 @@
 		<EmbedUntrackedSources>true</EmbedUntrackedSources>
     <Description>LogicBuilder.Domain includes the interface all model classes must implement to participate in the framework's change tracking and object mapping.</Description>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
-    <PackageReleaseNotes>Adding JSON converter for BaseModel deserialization.</PackageReleaseNotes>
+    <PackageReleaseNotes>Remediate unsafe deserialization.</PackageReleaseNotes>
     <PackageTags>crud operations logic-builder</PackageTags>
     <Copyright>Copyright © BPS 2017</Copyright>
     <RepositoryUrl>https://github.com/BpsLogicBuilder/LogicBuilder.Domain</RepositoryUrl>
@@ -35,12 +35,12 @@
 	</ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="MinVer" Version="7.0.0">
+    <PackageReference Include="MinVer" Version="8.0.0">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="10.0.300" PrivateAssets="All" />
-    <PackageReference Include="System.Text.Json" Version="10.0.8" />
+    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="10.0.401" PrivateAssets="All" />
+    <PackageReference Include="System.Text.Json" Version="10.0.12" />
   </ItemGroup>
 
 </Project>

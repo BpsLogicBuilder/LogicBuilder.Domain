@@ -1,5 +1,7 @@
 ﻿using LogicBuilder.Domain.Json;
 using System;
+using System.Linq;
+using System.Reflection;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
@@ -55,11 +57,115 @@ namespace LogicBuilder.Domain.Tests.Json
             string json = JsonSerializer.Serialize(invalidTypeModel);
 
             // Act & Assert
-            var exception = Assert.Throws<InvalidOperationException>(() =>
+            var exception = Assert.Throws<JsonException>(() =>
             {
                 JsonSerializer.Deserialize<InvalidTypeModel>(json);
             });
-            Assert.Equal($"Type cannot be loaded for {typeof(InvalidTypeChildModel).Name}.", exception.Message);
+            Assert.Equal($"Type \"{typeof(InvalidTypeChildModel).Name}\" is not an allowed type for {typeof(InvalidTypeModelBase).FullName}.", exception.Message);
+        }
+
+        [Fact]
+        public void ModelConverterDoesNotInstantiate_TypeOutsideAllowlist()
+        {
+            // Arrange
+            GadgetType.Instantiated = false;
+            string json = "{\"TypeString\":\"" + typeof(GadgetType).AssemblyQualifiedName + "\"}";
+
+            // Act & Assert
+            Assert.Throws<JsonException>(() => JsonSerializer.Deserialize<BaseModel>(json));
+            Assert.False(GadgetType.Instantiated);
+        }
+
+        [Fact]
+        public void ModelConverterRejects_DescriptorSubtypeFromUnregisteredAssembly()
+        {
+            // Arrange
+            string json = "{\"TypeString\":\"" + typeof(ExternalModel).AssemblyQualifiedName + "\"}";
+
+            // Act & Assert
+            Assert.Throws<JsonException>(() => JsonSerializer.Deserialize<BaseModel>(json));
+            Assert.Throws<JsonException>(() => JsonSerializer.Serialize<BaseModel>(new ExternalModel()));
+        }
+
+        [Fact]
+        public void ModelConverterAccepts_DescriptorSubtypeFromRegisteredAssembly()
+        {
+            // Arrange
+            string json = JsonSerializer.Serialize<BaseModel>(new ExternalModel { Name = "A" }, TestSerializationOptions.ExternalModelOptions);
+
+            // Act
+            BaseModel result = JsonSerializer.Deserialize<BaseModel>(json, TestSerializationOptions.ExternalModelOptions)!;
+
+            // Assert
+            Assert.Equal("A", Assert.IsType<ExternalModel>(result).Name);
+        }
+
+        [Fact]
+        public void ModelConverterAccepts_DescriptorSubtypeFromRegisteredAssembly_UsingTypesListConstructor()
+        {
+            // Arrange
+            JsonSerializerOptions options = new();
+            options.Converters.Add(new TestModelConverter(typeof(ExternalModel).Assembly.GetTypes().Where(t => typeof(BaseModel).IsAssignableFrom(t)).ToArray()));
+            string json = JsonSerializer.Serialize<BaseModel>(new ExternalModel { Name = "A" }, options);
+
+            // Act
+            BaseModel result = JsonSerializer.Deserialize<BaseModel>(json, options)!;
+
+            // Assert
+            Assert.Equal("A", Assert.IsType<ExternalModel>(result).Name);
+        }
+
+        [Fact]
+        public void DescriptorThrowsJsonException_WhenJsonTpePropertyNameIsNotAString()
+        {
+            // Arrange
+            JsonSerializerOptions options = new();
+            options.Converters.Add(new TestModelConverterWithInvalidPropertyName(typeof(ExternalModel).Assembly.GetTypes().Where(t => typeof(BaseModel).IsAssignableFrom(t)).ToArray()));
+            string json = JsonSerializer.Serialize<BaseModel>(new ExternalModel { Name = "A" }, options);
+
+            // Act Assert
+            Assert.Throws<JsonException>(() => JsonSerializer.Deserialize<BaseModel>(json, options)!);
+        }
+
+        [Fact]
+        public void ModelConverterAccepts_TypeStringWithDifferentAssemblyVersion()
+        {
+            // Arrange
+            string typeString = $"{typeof(ExternalModel).FullName}, {typeof(ExternalModel).Assembly.GetName().Name}, Version=0.0.0.1, Culture=neutral, PublicKeyToken=null";
+            string json = "{\"TypeString\":\"" + typeString + "\",\"Constant\":1}";
+
+            // Act & Assert
+            Assert.IsType<ExternalModel>(JsonSerializer.Deserialize<BaseModel>(json, TestSerializationOptions.ExternalModelOptions));
+        }
+
+        [Fact]
+        public void CreateConverterThrows_WhenTypesListContainsInvalidTypes()
+        {
+            // Act Assert
+            Assert.Throws<ArgumentException>(() =>
+            {
+                new TestModelConverter(typeof(ExternalModel).Assembly.GetTypes().ToArray());
+            });
+        }
+
+        [Fact]
+        public void CreateConverterThrows_WhenTypesListIsNull()
+        {
+            // Act Assert
+            Assert.Throws<ArgumentNullException>(() =>
+            {
+                new TestModelConverter((Type[])null!);
+            });
+        }
+
+        [Fact]
+        public void CreateConverterThrows_WhenAssemblyListIsNull()
+        {
+            // Act Assert
+            Assert.Throws<ArgumentNullException>(() =>
+            {
+                new TestModelConverter((Assembly[])null!);
+            });
         }
 
         private static JsonSerializerOptions? _options;
@@ -75,6 +181,56 @@ namespace LogicBuilder.Domain.Tests.Json
                 _options = options;
                 return _options;
             }
+        }
+
+        public class GadgetType
+        {
+            public static bool Instantiated { get; set; }
+            protected GadgetType() => Instantiated = true;
+        }
+
+        public class ExternalModel : BaseModel
+        {
+            public int ID { get; set; }
+            public string? Name { get; set; }
+        }
+
+        internal class TestModelConverter : JsonTypeConverter<BaseModel>
+        {
+            public TestModelConverter()
+            {
+            }
+
+            public TestModelConverter(params Assembly[] additionalAssemblies)
+                : base(additionalAssemblies)
+            {
+            }
+
+            public TestModelConverter(params Type[] types)
+                : base(types)
+            {
+            }
+
+            public override string TypePropertyName => nameof(BaseModel.TypeString);
+        }
+
+        internal class TestModelConverterWithInvalidPropertyName : JsonTypeConverter<BaseModel>
+        {
+            public TestModelConverterWithInvalidPropertyName()
+            {
+            }
+
+            public TestModelConverterWithInvalidPropertyName(params Assembly[] additionalAssemblies)
+                : base(additionalAssemblies)
+            {
+            }
+
+            public TestModelConverterWithInvalidPropertyName(params Type[] types)
+                : base(types)
+            {
+            }
+
+            public override string TypePropertyName => nameof(ExternalModel.ID);
         }
 
         internal class TestObjectConverter : JsonTypeConverter<object>
@@ -140,6 +296,24 @@ namespace LogicBuilder.Domain.Tests.Json
                     _default = options;
 
                     return _default;
+                }
+            }
+
+            private static JsonSerializerOptions? _externalModelOptions;
+            public static JsonSerializerOptions ExternalModelOptions
+            {
+                get
+                {
+                    if (_externalModelOptions != null)
+                        return _externalModelOptions;
+
+                    var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+
+                    options.Converters.Add(new ModelConverter(typeof(ExternalModel).Assembly));
+
+                    _externalModelOptions = options;
+
+                    return _externalModelOptions;
                 }
             }
         }

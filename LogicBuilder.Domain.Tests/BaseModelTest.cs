@@ -24,7 +24,7 @@ namespace LogicBuilder.Domain.Tests
             };
 
             // Act
-            string json = JsonSerializer.Serialize(saveModelRequest);
+            string json = JsonSerializer.Serialize(saveModelRequest, Options);
             var deserializedRequest = JsonSerializer.Deserialize<SaveModelRequest>(json, Options);
 
             // Assert
@@ -48,7 +48,7 @@ namespace LogicBuilder.Domain.Tests
                     return _options;
 
                 var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
-                options.Converters.Add(new ModelConverter());
+                options.Converters.Add(new ModelConverter(typeof(EnrollmentModel).Assembly));
                 _options = options;
                 return _options;
             }
