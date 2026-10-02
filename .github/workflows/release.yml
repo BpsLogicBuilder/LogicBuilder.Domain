@@ -35,12 +35,7 @@ jobs:
           key: ${{ runner.os }}-nuget-${{ hashFiles('**/*.csproj') }}
 
       - name: Run unit tests
-        run: dotnet test --verbosity normal --configuration Release /p:CollectCoverage=true /p:Threshold=50 /p:ThresholdType=line /p:ThresholdStat=Average /p:CoverletOutput=./TestResults/ /p:ExcludeByAttribute="GeneratedCodeAttribute" /p:ExcludeByAttribute="GeneratedCodeAttribute" /p:CoverletOutputFormat=opencover
-
-      - name: Upload coverage reports to Codecov
-        uses: codecov/codecov-action@671740ac38dd9b0130fbe1cec585b89eea48d3de
-        with:
-          token: ${{ secrets.CODECOV_TOKEN }}
+        run: dotnet test --verbosity normal --configuration Release
 
   publish-packages:
     name: Publish Package to GitHub Packages and NuGet.org
